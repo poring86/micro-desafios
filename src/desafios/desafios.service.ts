@@ -15,13 +15,78 @@ export class DesafiosService {
     try {
       const desafioCriado = new this.desafioModel(desafio);
       desafioCriado.dataHoraSolicitacao = new Date();
-      /*
-            Quando um desafio for criado, definimos o status 
-            desafio como pendente
-        */
       desafioCriado.status = DesafioStatus.PENDENTE;
       console.log(`desafioCriado: ${JSON.stringify(desafioCriado)}`);
       return await desafioCriado.save();
+    } catch (error) {
+      console.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarTodosDesafios(): Promise<Desafio[]> {
+    try {
+      return await this.desafioModel.find().exec();
+    } catch (error) {
+      console.log(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafiosDeUmJogador(_id: any): Promise<Desafio[] | Desafio> {
+    try {
+      return await this.desafioModel.find().where('jogadores').in(_id).exec();
+    } catch (error) {
+      console.log(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafioPeloId(_id: any): Promise<Desafio> {
+    try {
+      return await this.desafioModel.findOne({ _id }).exec();
+    } catch (error) {
+      console.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async atualizarDesafio(_id: string, desafio: Desafio): Promise<void> {
+    try {
+      desafio.dataHoraResposta = new Date();
+      await this.desafioModel
+        .findOneAndUpdate({ _id }, { $set: desafio })
+        .exec();
+    } catch (error) {
+      console.error(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async atualizarDesafioPartida(
+    idPartida: string,
+    desafio: Desafio,
+  ): Promise<void> {
+    try {
+      desafio.status = DesafioStatus.REALIZADO;
+      desafio.partida = idPartida;
+      await this.desafioModel
+        .findOneAndUpdate({ _id: desafio._id }, { $set: desafio })
+        .exec();
+    } catch (error) {
+      console.log(`error: ${JSON.stringify(error.message)}`);
+      throw new RpcException(error.message);
+    }
+  }
+
+  async deletarDesafio(desafio: Desafio): Promise<void> {
+    try {
+      const { _id } = desafio;
+      desafio.status = DesafioStatus.CANCELADO;
+      console.log(`desafio: ${JSON.stringify(desafio)}`);
+      await this.desafioModel
+        .findOneAndUpdate({ _id }, { $set: desafio })
+        .exec();
     } catch (error) {
       console.error(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);
