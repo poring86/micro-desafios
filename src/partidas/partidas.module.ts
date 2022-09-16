@@ -1,4 +1,16 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ProxyRMQModule } from 'src/proxyrmq/proxyrmq.module';
+import { PartidaSchema } from './interfaces/partida.schema';
+import { PartidasController } from './partidas.controller';
+import { PartidasService } from './partidas.service';
 
-@Module({})
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: 'Partida', schema: PartidaSchema }]),
+    ProxyRMQModule,
+  ],
+  controllers: [PartidasController],
+  providers: [PartidasService],
+})
 export class PartidasModule {}
