@@ -8,7 +8,7 @@ import { PartidasModule } from './partidas/partidas.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://localhost:27017/smartranking?directConnection=true',
+      'mongodb://localhost:27017/srdesafios?directConnection=true',
       {
         useUnifiedTopology: true,
       },
