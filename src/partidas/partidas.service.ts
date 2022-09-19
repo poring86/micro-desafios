@@ -16,6 +16,9 @@ export class PartidasService {
   private clientDesafios =
     this.clientProxySmartRanking.getClientProxyDesafiosInstance();
 
+  private clientRankings =
+    this.clientProxySmartRanking.getClientProxyRankingsInstance();
+
   async criarPartida(partida: Partida): Promise<Partida> {
     try {
       const partidaCriada = new this.partidaModel(partida);
@@ -27,11 +30,15 @@ export class PartidasService {
         .send('consultar-desafios', { idJogador: '', _id: partida.desafio })
         .toPromise();
 
-      return await this.clientDesafios
+      await this.clientDesafios
         .emit('atualizar-desafio-partida', {
           idPartida: idPartida,
           desafio: desafio,
         })
+        .toPromise();
+
+      return this.clientRankings
+        .emit('processar-partida', { idPartida: idPartida, partida: partida })
         .toPromise();
     } catch (error) {
       console.error(`error: ${JSON.stringify(error.message)}`);

@@ -24,12 +24,23 @@ export class ClientProxySmartRanking {
       },
     });
   }
+
   getClientProxyDesafiosInstance(): ClientProxy {
     return ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
         urls: [`amqp://${this.rmqUser}:${this.rmqPassword}@${this.rmqUrl}`],
         queue: 'desafios',
+      },
+    });
+  }
+
+  getClientProxyRankingsInstance(): ClientProxy {
+    return ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: [`amqp://${this.rmqUser}:${this.rmqPassword}@${this.rmqUrl}`],
+        queue: 'rankings',
       },
     });
   }
