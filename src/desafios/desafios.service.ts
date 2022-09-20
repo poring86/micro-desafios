@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
+import * as momentTimezone from 'moment-timezone';
+
 import { Model } from 'mongoose';
 import { DesafioStatus } from './desafio-status.enum';
 import { Desafio } from './interfaces/desafio.interface';
@@ -30,6 +32,47 @@ export class DesafiosService {
     } catch (error) {
       console.log(`error: ${JSON.stringify(error.message)}`);
       throw new RpcException(error.message);
+    }
+  }
+
+  async consultarDesafiosRealizados(idCategoria: string): Promise<Desafio[]> {
+    try {
+      return await this.desafioModel
+        .find()
+        .where('categoria')
+        .equals(idCategoria)
+        .where('status')
+        .equals(DesafioStatus.REALIZADO)
+        .exec();
+    } catch (e) {
+      throw new RpcException(e.message);
+    }
+  }
+
+  async consultarDesafiosRealizadosPelaData(
+    idCategoria: string,
+    dataRef: string,
+  ): Promise<Desafio[]> {
+    try {
+      const dataRefNew = `${dataRef} 23:59.59.999`;
+
+      return await this.desafioModel
+        .find()
+        .where('categoria')
+        .equals(idCategoria)
+        .where('status')
+        .equals(DesafioStatus.REALIZADO)
+        .where('dataHoraDesafio')
+        .lte(
+          Number(
+            momentTimezone(dataRefNew)
+              .tz('UTC')
+              .format('YYYY-MM-DD HH:mm:ss.SSS+00:00'),
+          ),
+        )
+        .exec();
+    } catch (e) {
+      throw new RpcException(e.message);
     }
   }
 
