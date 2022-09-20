@@ -20,8 +20,8 @@ export class DesafiosController {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
     try {
-      await this.desafiosService.criarDesafio(desafio);
       await channel.ack(originalMsg);
+      await this.desafiosService.criarDesafio(desafio);
     } catch (error) {
       console.log(`error: ${JSON.stringify(error.message)}`);
       const filterAckError = ackErrors.filter((ackError) =>
