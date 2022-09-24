@@ -23,7 +23,7 @@ export class DesafiosController {
       await channel.ack(originalMsg);
       await this.desafiosService.criarDesafio(desafio);
     } catch (error) {
-      console.log(`error: ${JSON.stringify(error.message)}`);
+      console.log('error:', error);
       const filterAckError = ackErrors.filter((ackError) =>
         error.message.includes(ackError),
       );
