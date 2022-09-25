@@ -63,23 +63,22 @@ export class DesafiosService {
     dataRef: string,
   ): Promise<Desafio[]> {
     try {
-      const dataRefNew = `${dataRef} 23:59.59.999`;
+      const dataRefNew = `${dataRef} 23:59:59.999`;
 
-      return await this.desafioModel
+      const finalData = await this.desafioModel
         .find()
         .where('categoria')
         .equals(idCategoria)
         .where('status')
         .equals(DesafioStatus.REALIZADO)
-        .where('dataHoraDesafio')
-        .lte(
-          Number(
-            momentTimezone(dataRefNew)
-              .tz('UTC')
-              .format('YYYY-MM-DD HH:mm:ss.SSS+00:00'),
-          ),
-        )
+        .where('dataHoraDesafio', {
+          $lte: momentTimezone(dataRefNew)
+            .tz('UTC')
+            .format('YYYY-MM-DD HH:mm:ss.SSS+00:00'),
+        })
         .exec();
+
+      return finalData;
     } catch (e) {
       throw new RpcException(e.message);
     }
