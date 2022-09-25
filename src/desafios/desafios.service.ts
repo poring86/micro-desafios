@@ -84,7 +84,7 @@ export class DesafiosService {
     }
   }
 
-  async consultarDesafiosDeUmJogador(_id: any): Promise<Desafio[] | Desafio> {
+  async consultarDesafiosDeUmJogador(_id): Promise<Desafio[] | Desafio> {
     try {
       return await this.desafioModel.find().where('jogadores').in(_id).exec();
     } catch (error) {
@@ -93,7 +93,7 @@ export class DesafiosService {
     }
   }
 
-  async consultarDesafioPeloId(_id: any): Promise<Desafio> {
+  async consultarDesafioPeloId(_id: string): Promise<Desafio> {
     try {
       return await this.desafioModel.findOne({ _id }).exec();
     } catch (error) {
